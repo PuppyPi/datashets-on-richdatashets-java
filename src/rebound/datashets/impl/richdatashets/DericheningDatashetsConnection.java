@@ -32,7 +32,7 @@ import rebound.richdatashets.api.model.RichdatashetsSemanticColumns;
 import rebound.richdatashets.api.model.RichdatashetsTable;
 import rebound.richdatashets.api.operation.RichdatashetsConnection;
 import rebound.richdatashets.api.operation.RichdatashetsOperation.RichdatashetsOperationWithDataTimestamp;
-import rebound.richshets.model.cell.RichshetCellContents;
+import rebound.richshets.model.cell.RichshetsCellContents;
 import rebound.util.collections.FilterAwayReturnPath;
 
 public class DericheningDatashetsConnection
@@ -252,7 +252,7 @@ implements DatashetsConnection
 						{
 							for (int columnIndexRich = 0; columnIndexRich < nColumnsSingleValuedRich; columnIndexRich++)
 							{
-								RichshetCellContents v = rowRich.getSingleValuedColumns().get(columnIndexRich);
+								RichshetsCellContents v = rowRich.getSingleValuedColumns().get(columnIndexRich);
 								
 								if (!v.isEmptyText())
 								{
@@ -284,7 +284,7 @@ implements DatashetsConnection
 								ExtendedRichdatashetsSingleValuedCellAbsenceStrategy absenceStrategy = unignoredSinglesAbsenceStrategies[i];
 								int absencesStrategyOtherColumnIndex = unignoredSinglesAbsencesStrategiesOtherColumnIndexes[i];
 								
-								RichshetCellContents cell = rowRich.getSingleValuedColumns().get(columnIndexRich);
+								RichshetsCellContents cell = rowRich.getSingleValuedColumns().get(columnIndexRich);
 								
 								boolean isAbsentCell = isSingleValuedCellNull(cell, absenceStrategy, x -> rowRich.getSingleValuedColumns().get(absencesStrategyOtherColumnIndex));
 								
@@ -300,7 +300,7 @@ implements DatashetsConnection
 							
 							for (int i = 0; i < nMulti; i++)
 							{
-								List<RichshetCellContents> r = rowRich.getMultiValuedColumns().get(i);
+								List<RichshetsCellContents> r = rowRich.getMultiValuedColumns().get(i);
 								
 								int n = r.size();
 								List<String> p = new ArrayList<>(n);
@@ -329,7 +329,7 @@ implements DatashetsConnection
 	@FunctionalInterface
 	protected static interface UnaryFunction<I, O> { public O f(I a); }
 	
-	protected boolean isSingleValuedCellNull(RichshetCellContents cell, ExtendedRichdatashetsSingleValuedCellAbsenceStrategy absenceStrategy, UnaryFunction<String, RichshetCellContents> getOtherColumn)
+	protected boolean isSingleValuedCellNull(RichshetsCellContents cell, ExtendedRichdatashetsSingleValuedCellAbsenceStrategy absenceStrategy, UnaryFunction<String, RichshetsCellContents> getOtherColumn)
 	{
 		if (absenceStrategy instanceof ExtendedRichdatashetsCellAbsenceStrategyNeverNull)
 		{
@@ -342,7 +342,7 @@ implements DatashetsConnection
 		else if (absenceStrategy instanceof ExtendedRichdatashetsCellAbsenceStrategyOtherColumn)
 		{
 			ExtendedRichdatashetsCellAbsenceStrategyOtherColumn cas = (ExtendedRichdatashetsCellAbsenceStrategyOtherColumn) absenceStrategy;
-			RichshetCellContents otherCell = getOtherColumn.f(cas.getUIDOfOtherColumn());
+			RichshetsCellContents otherCell = getOtherColumn.f(cas.getUIDOfOtherColumn());
 			return cas.isAbsent(otherCell);
 		}
 		else
@@ -369,17 +369,17 @@ implements DatashetsConnection
 			rowsRich = new ArrayList<>(rowsPlain.size());
 			
 			int nMulti = columnsMultiValuedRich.size();
-			RichshetCellContents[] richMultiColumnTemplates;  //indexes are rich-form indexes
+			RichshetsCellContents[] richMultiColumnTemplates;  //indexes are rich-form indexes
 			int[] multiColumnIndexesInPlain;  //indexes are rich-form indexes and values are plain-form indexes
 			{
-				richMultiColumnTemplates = new RichshetCellContents[nMulti];
+				richMultiColumnTemplates = new RichshetsCellContents[nMulti];
 				multiColumnIndexesInPlain = new int[nMulti];
 				
 				for (int i = 0; i < nMulti; i++)
 				{
 					String uid = columnsMultiValuedRich.getUIDByIndex(i);
 					
-					RichshetCellContents template = dericheningStrategy.getMultiValueColumnFormattingTemplates().get(uid);
+					RichshetsCellContents template = dericheningStrategy.getMultiValueColumnFormattingTemplates().get(uid);
 					
 					if (template == null)
 						throw new AssertionError(uid);  //This should have been checked for already!
@@ -517,13 +517,13 @@ implements DatashetsConnection
 							//If it's a new row, or the original row was Used not Unused,
 							//Make it from scratch! :3
 							
-							List<RichshetCellContents> s;
+							List<RichshetsCellContents> s;
 							{
 								s = new ArrayList<>(nSingleRich);
 								
 								for (int columnIndexRich = 0; columnIndexRich < nSingleRich; columnIndexRich++)
 								{
-									RichshetCellContents richCellValueForUnusedRow;
+									RichshetsCellContents richCellValueForUnusedRow;
 									{
 										Object x = richSingleColumnsConfigs[columnIndexRich];
 										
@@ -553,7 +553,7 @@ implements DatashetsConnection
 								}
 							}
 							
-							List<List<RichshetCellContents>> m;
+							List<List<RichshetsCellContents>> m;
 							{
 								m = new ArrayList<>(nMulti);
 								for (int i = 0; i < nMulti; i++)
@@ -566,11 +566,11 @@ implements DatashetsConnection
 						{
 							//Otherwise it was unused before and it's still unused, so just copy it verbatim! :>
 							
-							List<List<RichshetCellContents>> m;
+							List<List<RichshetsCellContents>> m;
 							{
-								List<List<RichshetCellContents>> l = originalRow.getMultiValuedColumns();
+								List<List<RichshetsCellContents>> l = originalRow.getMultiValuedColumns();
 								m = new ArrayList<>(l.size());
-								for (List<RichshetCellContents> ll : l)
+								for (List<RichshetsCellContents> ll : l)
 									m.add(new ArrayList<>(ll));
 							}
 							
@@ -584,7 +584,7 @@ implements DatashetsConnection
 					{
 						DatashetsUsedRow rowPlainUsed = (DatashetsUsedRow) rowPlain;
 						
-						List<RichshetCellContents> s;
+						List<RichshetsCellContents> s;
 						{
 							s = new ArrayList<>(nSingleRich);
 							
@@ -607,7 +607,7 @@ implements DatashetsConnection
 								//								}
 								
 								
-								RichshetCellContents richCellValue;
+								RichshetsCellContents richCellValue;
 								{
 									Object x = richSingleColumnsConfigs[columnIndexRich];
 									
@@ -646,7 +646,7 @@ implements DatashetsConnection
 											isnull = rowPlainUsed.getSingleValuedColumns().get(plainIndex) == null;
 										}
 										
-										RichshetCellContents valueForUsTheOtherColumn = isnull ? c.getAbsentValueInOtherColumnForNewCells() : c.getPresentValueInOtherColumnForNewCells();
+										RichshetsCellContents valueForUsTheOtherColumn = isnull ? c.getAbsentValueInOtherColumnForNewCells() : c.getPresentValueInOtherColumnForNewCells();
 										
 										richCellValue = valueForUsTheOtherColumn;
 									}
@@ -676,7 +676,7 @@ implements DatashetsConnection
 							}
 						}
 						
-						List<List<RichshetCellContents>> m;
+						List<List<RichshetsCellContents>> m;
 						{
 							m = new ArrayList<>(nMulti);
 							
@@ -685,14 +685,14 @@ implements DatashetsConnection
 								int columnIndexPlain = multiColumnIndexesInPlain[columnIndexRich];
 								List<String> lPlain = rowPlainUsed.getMultiValuedColumns().get(columnIndexPlain);
 								
-								RichshetCellContents template = richMultiColumnTemplates[columnIndexRich];
+								RichshetsCellContents template = richMultiColumnTemplates[columnIndexRich];
 								
-								List<RichshetCellContents> lRich = new ArrayList<>(lPlain.size());
+								List<RichshetsCellContents> lRich = new ArrayList<>(lPlain.size());
 								
 								for (String ePlain : lPlain)
 								{
 									requireNonNull(ePlain);  //multi-value strings are nonnull in both plain and rich Datashets.
-									RichshetCellContents eRich = template.withOtherText(ePlain);
+									RichshetsCellContents eRich = template.withOtherText(ePlain);
 									lRich.add(eRich);
 								}
 								

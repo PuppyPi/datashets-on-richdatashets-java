@@ -10,18 +10,18 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import rebound.datashets.impl.richdatashets.ExtendedRichdatashetsSingleValuedCellAbsenceStrategy.ExtendedRichdatashetsCellAbsenceStrategyOtherColumn;
 import rebound.richdatashets.api.model.RichdatashetsCellAbsenceStrategy;
-import rebound.richshets.model.cell.RichshetCellContents;
+import rebound.richshets.model.cell.RichshetsCellContents;
 import rebound.util.collections.FilterAwayReturnPath;
 
 public class DericheningStrategy
 {
 	protected final @Nonnull Map<String, UsedUnusedRowRichCellContentsPair> singleValueColumnsToIgnore;
 	protected final @Nonnull Map<String, ExtendedRichdatashetsSingleValuedCellAbsenceStrategy> singleValueColumnAbsenceStrategies;
-	protected final @Nonnull Map<String, RichshetCellContents> multiValueColumnFormattingTemplates;
+	protected final @Nonnull Map<String, RichshetsCellContents> multiValueColumnFormattingTemplates;
 	
 	
 	
-	public DericheningStrategy(@Nonnull Map<String, UsedUnusedRowRichCellContentsPair> singleValueColumnsToIgnore, @Nonnull Map<String, ExtendedRichdatashetsSingleValuedCellAbsenceStrategy> singleValueColumnAbsenceStrategies, @Nonnull Map<String, RichshetCellContents> multiValueColumnFormattingTemplates)
+	public DericheningStrategy(@Nonnull Map<String, UsedUnusedRowRichCellContentsPair> singleValueColumnsToIgnore, @Nonnull Map<String, ExtendedRichdatashetsSingleValuedCellAbsenceStrategy> singleValueColumnAbsenceStrategies, @Nonnull Map<String, RichshetsCellContents> multiValueColumnFormattingTemplates)
 	{
 		requireNonNull(singleValueColumnsToIgnore);
 		requireNonNull(singleValueColumnAbsenceStrategies);
@@ -29,7 +29,7 @@ public class DericheningStrategy
 		
 		
 		//Check multis
-		for (Entry<String, RichshetCellContents> e : multiValueColumnFormattingTemplates.entrySet())
+		for (Entry<String, RichshetsCellContents> e : multiValueColumnFormattingTemplates.entrySet())
 		{
 			requireNonNull(e.getKey());
 			requireNonNull(e.getValue());
@@ -165,7 +165,7 @@ public class DericheningStrategy
 	/**
 	 * The text of the values here will always be overwritten X3
 	 */
-	public Map<String, RichshetCellContents> getMultiValueColumnFormattingTemplates()
+	public Map<String, RichshetsCellContents> getMultiValueColumnFormattingTemplates()
 	{
 		return multiValueColumnFormattingTemplates;
 	}

@@ -4,31 +4,31 @@ import static java.util.Objects.*;
 import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import rebound.richdatashets.api.model.RichdatashetsCellAbsenceStrategy;
-import rebound.richshets.model.cell.RichshetCellContents;
+import rebound.richshets.model.cell.RichshetsCellContents;
 
 public abstract class ExtendedRichdatashetsSingleValuedCellAbsenceStrategy
 {
-	protected final @Nonnull RichshetCellContents canonicalPresentForUsedRow;
-	protected final @Nonnull RichshetCellContents canonicalForUnusedRow;
+	protected final @Nonnull RichshetsCellContents canonicalPresentForUsedRow;
+	protected final @Nonnull RichshetsCellContents canonicalForUnusedRow;
 	
-	public ExtendedRichdatashetsSingleValuedCellAbsenceStrategy(RichshetCellContents canonicalPresentForUsedRow, RichshetCellContents canonicalForUnusedRow)
+	public ExtendedRichdatashetsSingleValuedCellAbsenceStrategy(RichshetsCellContents canonicalPresentForUsedRow, RichshetsCellContents canonicalForUnusedRow)
 	{
 		this.canonicalPresentForUsedRow = requireNonNull(canonicalPresentForUsedRow);
 		this.canonicalForUnusedRow = requireNonNull(canonicalForUnusedRow);
 	}
 	
 	
-	public abstract RichshetCellContents getCanonicalAbsentForUsedRow();
+	public abstract RichshetsCellContents getCanonicalAbsentForUsedRow();
 	
 	/**
 	 * The text of this will always be overwritten X3
 	 */
-	public RichshetCellContents getCanonicalPresentForUsedRow()
+	public RichshetsCellContents getCanonicalPresentForUsedRow()
 	{
 		return canonicalPresentForUsedRow;
 	}
 	
-	public RichshetCellContents getCanonicalForUnusedRow()
+	public RichshetsCellContents getCanonicalForUnusedRow()
 	{
 		return canonicalForUnusedRow;
 	}
@@ -89,13 +89,13 @@ public abstract class ExtendedRichdatashetsSingleValuedCellAbsenceStrategy
 	public static class ExtendedRichdatashetsCellAbsenceStrategyNeverNull
 	extends ExtendedRichdatashetsSingleValuedCellAbsenceStrategy
 	{
-		public ExtendedRichdatashetsCellAbsenceStrategyNeverNull(RichshetCellContents canonicalPresentForUsedRow, RichshetCellContents canonicalForUnusedRow)
+		public ExtendedRichdatashetsCellAbsenceStrategyNeverNull(RichshetsCellContents canonicalPresentForUsedRow, RichshetsCellContents canonicalForUnusedRow)
 		{
 			super(canonicalPresentForUsedRow, canonicalForUnusedRow);
 		}
 		
 		@Override
-		public RichshetCellContents getCanonicalAbsentForUsedRow()
+		public RichshetsCellContents getCanonicalAbsentForUsedRow()
 		{
 			throw new UnsupportedOperationException("It should never be needed!");
 		}
@@ -110,7 +110,7 @@ public abstract class ExtendedRichdatashetsSingleValuedCellAbsenceStrategy
 	{
 		protected final RichdatashetsCellAbsenceStrategy underlying;
 		
-		public ExtendedRichdatashetsCellAbsenceStrategyNormal(RichshetCellContents canonicalPresentForUsedRow, RichshetCellContents canonicalForUnusedRow, RichdatashetsCellAbsenceStrategy underlying)
+		public ExtendedRichdatashetsCellAbsenceStrategyNormal(RichshetsCellContents canonicalPresentForUsedRow, RichshetsCellContents canonicalForUnusedRow, RichdatashetsCellAbsenceStrategy underlying)
 		{
 			super(canonicalPresentForUsedRow, canonicalForUnusedRow);
 			this.underlying = requireNonNull(underlying);
@@ -122,7 +122,7 @@ public abstract class ExtendedRichdatashetsSingleValuedCellAbsenceStrategy
 		}
 		
 		@Override
-		public RichshetCellContents getCanonicalAbsentForUsedRow()
+		public RichshetsCellContents getCanonicalAbsentForUsedRow()
 		{
 			return underlying.getAbsentValueForNewCells();
 		}
@@ -172,13 +172,13 @@ public abstract class ExtendedRichdatashetsSingleValuedCellAbsenceStrategy
 	public static class ExtendedRichdatashetsCellAbsenceStrategyOtherColumn
 	extends ExtendedRichdatashetsSingleValuedCellAbsenceStrategy
 	{
-		protected final @Nonnull RichshetCellContents canonicalAbsentForUsedRow;
+		protected final @Nonnull RichshetsCellContents canonicalAbsentForUsedRow;
 		
 		protected final @Nonnull String uidOfOtherColumn;
-		protected final @Nonnull Predicate<RichshetCellContents> isAbsentBasedOnValueInOtherColumn;
-		protected final @Nonnull RichshetCellContents absentValueInOtherColumnForNewCells;
-		protected final @Nonnull RichshetCellContents presentValueInOtherColumnForNewCells;
-		protected final @Nonnull RichshetCellContents unusedRowValueInOtherColumnForNewCells;
+		protected final @Nonnull Predicate<RichshetsCellContents> isAbsentBasedOnValueInOtherColumn;
+		protected final @Nonnull RichshetsCellContents absentValueInOtherColumnForNewCells;
+		protected final @Nonnull RichshetsCellContents presentValueInOtherColumnForNewCells;
+		protected final @Nonnull RichshetsCellContents unusedRowValueInOtherColumnForNewCells;
 		
 		/**
 		 * @param uidOfOtherColumn  the uid of the other single-value column that is to be interpreted 
@@ -186,7 +186,7 @@ public abstract class ExtendedRichdatashetsSingleValuedCellAbsenceStrategy
 		 * @param absentValueInOtherColumnForNewCells  The canonical value for the other column's contents if this one is null in non-rich Datashets
 		 * @param presentValueInOtherColumnForNewCells  The canonical value for the other column's contents if this one is non-null in non-rich Datashets
 		 */
-		public ExtendedRichdatashetsCellAbsenceStrategyOtherColumn(RichshetCellContents canonicalPresentForUsedRow, RichshetCellContents canonicalForUnusedRow, RichshetCellContents canonicalAbsentForUsedRow,  String uidOfOtherColumn, Predicate<RichshetCellContents> isAbsent, RichshetCellContents absentValueInOtherColumnForNewCells, RichshetCellContents presentValueInOtherColumnForNewCells, RichshetCellContents unusedRowValueInOtherColumnForNewCells)
+		public ExtendedRichdatashetsCellAbsenceStrategyOtherColumn(RichshetsCellContents canonicalPresentForUsedRow, RichshetsCellContents canonicalForUnusedRow, RichshetsCellContents canonicalAbsentForUsedRow,  String uidOfOtherColumn, Predicate<RichshetsCellContents> isAbsent, RichshetsCellContents absentValueInOtherColumnForNewCells, RichshetsCellContents presentValueInOtherColumnForNewCells, RichshetsCellContents unusedRowValueInOtherColumnForNewCells)
 		{
 			super(canonicalPresentForUsedRow, canonicalForUnusedRow);
 			this.canonicalAbsentForUsedRow = requireNonNull(canonicalAbsentForUsedRow);
@@ -198,7 +198,7 @@ public abstract class ExtendedRichdatashetsSingleValuedCellAbsenceStrategy
 		}
 		
 		@Override
-		public RichshetCellContents getCanonicalAbsentForUsedRow()
+		public RichshetsCellContents getCanonicalAbsentForUsedRow()
 		{
 			return canonicalAbsentForUsedRow;
 		}
@@ -209,27 +209,27 @@ public abstract class ExtendedRichdatashetsSingleValuedCellAbsenceStrategy
 			return uidOfOtherColumn;
 		}
 		
-		public boolean isAbsent(RichshetCellContents otherColumnsCellValue)
+		public boolean isAbsent(RichshetsCellContents otherColumnsCellValue)
 		{
 			return isAbsentBasedOnValueInOtherColumn.test(otherColumnsCellValue);
 		}
 		
-		public Predicate<RichshetCellContents> getIsAbsentBasedOnValueInOtherColumn()
+		public Predicate<RichshetsCellContents> getIsAbsentBasedOnValueInOtherColumn()
 		{
 			return isAbsentBasedOnValueInOtherColumn;
 		}
 		
-		public RichshetCellContents getAbsentValueInOtherColumnForNewCells()
+		public RichshetsCellContents getAbsentValueInOtherColumnForNewCells()
 		{
 			return absentValueInOtherColumnForNewCells;
 		}
 		
-		public RichshetCellContents getPresentValueInOtherColumnForNewCells()
+		public RichshetsCellContents getPresentValueInOtherColumnForNewCells()
 		{
 			return presentValueInOtherColumnForNewCells;
 		}
 		
-		public RichshetCellContents getUnusedRowValueInOtherColumnForNewCells()
+		public RichshetsCellContents getUnusedRowValueInOtherColumnForNewCells()
 		{
 			return unusedRowValueInOtherColumnForNewCells;
 		}
