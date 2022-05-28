@@ -22,6 +22,7 @@ import rebound.datashets.api.model.DatashetsUnusedRow;
 import rebound.datashets.api.model.DatashetsUsedRow;
 import rebound.datashets.api.operation.DatashetsConnection;
 import rebound.datashets.api.operation.DatashetsOperation;
+import rebound.datashets.api.operation.DatashetsOperation.DatashetsOperationWithDataTimestamp;
 import rebound.datashets.api.operation.DatashetsStructureException;
 import rebound.datashets.impl.richdatashets.ExtendedRichdatashetsSingleValuedCellAbsenceStrategy.ExtendedRichdatashetsCellAbsenceStrategyNeverNull;
 import rebound.datashets.impl.richdatashets.ExtendedRichdatashetsSingleValuedCellAbsenceStrategy.ExtendedRichdatashetsCellAbsenceStrategyNormal;
@@ -30,6 +31,7 @@ import rebound.richdatashets.api.model.RichdatashetsRow;
 import rebound.richdatashets.api.model.RichdatashetsSemanticColumns;
 import rebound.richdatashets.api.model.RichdatashetsTable;
 import rebound.richdatashets.api.operation.RichdatashetsConnection;
+import rebound.richdatashets.api.operation.RichdatashetsOperation.RichdatashetsOperationWithDataTimestamp;
 import rebound.richshets.model.cell.RichshetCellContents;
 import rebound.util.collections.FilterAwayReturnPath;
 
@@ -64,7 +66,7 @@ implements DatashetsConnection
 	@Override
 	public void perform(boolean performMaintenance, DatashetsOperation operation) throws DatashetsStructureException, IOException
 	{
-		underlying.perform(performMaintenance, operation == null ? null : inputRich ->
+		underlying.perform(performMaintenance, operation == null ? null : (RichdatashetsOperationWithDataTimestamp)(inputRich, timestamp) ->
 		{
 			validateForRichColumns(inputRich.getColumnsSingleValued().getUIDs(), inputRich.getColumnsMultiValued().getUIDs());
 			
@@ -86,7 +88,7 @@ implements DatashetsConnection
 			if (inputPlain != null)  //Todo disable someday when we feel safe this class' code is right XD'
 				validateForPlainColumns(inputPlain.getColumnsSingleValued().getUIDs(), inputPlain.getColumnsMultiValued().getUIDs());
 			
-			DatashetsTable outputPlain = operation.performInMemory(inputPlain);
+			DatashetsTable outputPlain = operation instanceof DatashetsOperationWithDataTimestamp ? ((DatashetsOperationWithDataTimestamp)operation).performInMemory(inputPlain, timestamp) : operation.performInMemory(inputPlain);
 			
 			if (outputPlain != null)
 				validateForPlainColumns(outputPlain.getColumnsSingleValued().getUIDs(), outputPlain.getColumnsMultiValued().getUIDs());
