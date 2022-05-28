@@ -8,6 +8,7 @@ import static rebound.util.objectutil.BasicObjectUtilities.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +62,15 @@ implements DatashetsConnection
 	
 	
 	
+	
+	
+	
+	
+	@Override
+	public Date getCurrentLastModifiedTimestamp() throws IOException
+	{
+		return underlying.getCurrentLastModifiedTimestamp();
+	}
 	
 	
 	@Override
